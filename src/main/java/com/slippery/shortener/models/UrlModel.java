@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class UrlModel {
     private String userId;
     private String name;
     private String description;
+    private LocalDateTime createdOn =LocalDateTime.now();
 }

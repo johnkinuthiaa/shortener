@@ -1,4 +1,7 @@
 package com.slippery.shortener.repository;
 
-public class UrlRepository {
+import com.slippery.shortener.models.UrlModel;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UrlRepository extends JpaRepository<UrlModel,Long> {
 }
