@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 
-@RequestMapping("/api/v1/shorten")
+@RequestMapping("/api/v1/shrtn")
 @RestController
 public class UrlController {
     private final UrlService service;
@@ -15,7 +15,6 @@ public class UrlController {
     public UrlController(UrlService service) {
         this.service = service;
     }
-
     @PostMapping("/create")
     public ResponseEntity<UrlDto> createUrl(@RequestBody UrlModel url) {
         return ResponseEntity.ok(service.shorten(url));

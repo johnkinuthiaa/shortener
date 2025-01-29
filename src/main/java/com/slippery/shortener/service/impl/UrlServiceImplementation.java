@@ -1,5 +1,7 @@
 package com.slippery.shortener.service.impl;
 
+import com.slippery.shortener.client.ClickDto;
+import com.slippery.shortener.client.ClicksClient;
 import com.slippery.shortener.dto.UrlDto;
 import com.slippery.shortener.models.UrlModel;
 import com.slippery.shortener.repository.UrlRepository;
@@ -13,9 +15,11 @@ import java.util.Random;
 @Service
 public class UrlServiceImplementation implements UrlService {
     private final UrlRepository repository;
+    private final ClicksClient clicksClient;
 
-    public UrlServiceImplementation(UrlRepository repository) {
+    public UrlServiceImplementation(UrlRepository repository, ClicksClient clicksClient) {
         this.repository = repository;
+        this.clicksClient = clicksClient;
     }
     private String createShortUrl(){
         Random random =new Random();
@@ -44,14 +48,19 @@ public class UrlServiceImplementation implements UrlService {
     @Override
     public UrlDto getOriginal(String shortenedUrl) {
         UrlDto response =new UrlDto();
+
+
         List<UrlModel> existingLink =repository.findAll().stream()
                 .filter(urlModel -> urlModel.getShortUrl().equalsIgnoreCase(shortenedUrl))
                 .toList();
+
         if(existingLink.isEmpty()){
             response.setMessage("No link found");
             response.setStatusCode(404);
             return response;
         }
+        clicksClient.addClicks(1L,existingLink.get(0).getId());
+
         response.setOriginalUrl(existingLink.get(0).getOriginalUrl());
         response.setMessage("original url");
         response.setStatusCode(200);
