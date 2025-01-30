@@ -42,6 +42,8 @@ public class UrlServiceImplementation implements UrlService {
         response.setMessage("Url created");
         response.setStatusCode(200);
         response.setUrlModel(urlModel);
+//        save clicks
+        clicksClient.createClickRecord(new Long[]{0L, urlModel.getId()});
         return response;
     }
 
