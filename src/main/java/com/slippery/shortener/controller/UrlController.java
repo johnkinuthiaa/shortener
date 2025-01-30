@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 
 @RequestMapping("/api/v1/shrtn")
 @RestController
+@CrossOrigin("http://localhost:5173/")
 public class UrlController {
     private final UrlService service;
 
@@ -33,5 +34,13 @@ public class UrlController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/get/all")
+    public ResponseEntity<UrlDto> findAll(){
+        return ResponseEntity.ok(service.findAll());
+    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<UrlDto> deleteById(@RequestParam Long urlId){
+        return ResponseEntity.ok(service.deleteById(urlId));
     }
 }

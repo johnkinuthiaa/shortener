@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpHeaders;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -24,6 +25,7 @@ public class UrlServiceImplementation implements UrlService {
     private String createShortUrl(){
         Random random =new Random();
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("shrtn.");
 
         String[] chars ={"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","z","y","z"};
         for(int i= 0;i<15;i++){
@@ -43,7 +45,30 @@ public class UrlServiceImplementation implements UrlService {
         response.setStatusCode(200);
         response.setUrlModel(urlModel);
 //        save clicks
-        clicksClient.createClickRecord(new Long[]{0L, urlModel.getId()});
+//        clicksClient.createClickRecord(new Long[]{0L, urlModel.getId()});
+        return response;
+    }
+
+    @Override
+    public UrlDto findAll() {
+        UrlDto response =new UrlDto();
+        response.setUrlModels(repository.findAll());
+        response.setStatusCode(200);
+        return response;
+    }
+
+    @Override
+    public UrlDto deleteById(Long urlId) {
+        UrlDto response =new UrlDto();
+        Optional<UrlModel> existingUrl =repository.findById(urlId);
+        if(existingUrl.isEmpty()){
+            response.setStatusCode(404);
+            response.setMessage("Url not found");
+            return response;
+        }
+        repository.deleteById(existingUrl.get().getId());
+        response.setStatusCode(200);
+        response.setMessage("Url deleted");
         return response;
     }
 
