@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 
 @RequestMapping("/api/v1/shrtn")
 @RestController
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin("http://localhost:5174/")
 public class UrlController {
     private final UrlService service;
     private final BarCodeService barCodeService;
