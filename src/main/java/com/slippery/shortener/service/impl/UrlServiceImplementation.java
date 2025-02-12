@@ -1,13 +1,10 @@
 package com.slippery.shortener.service.impl;
 
-import com.slippery.shortener.client.ClickDto;
-import com.slippery.shortener.client.ClicksClient;
 import com.slippery.shortener.dto.UrlDto;
 import com.slippery.shortener.models.UrlModel;
 import com.slippery.shortener.repository.UrlRepository;
 import com.slippery.shortener.service.UrlService;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +13,10 @@ import java.util.Random;
 @Service
 public class UrlServiceImplementation implements UrlService {
     private final UrlRepository repository;
-    private final ClicksClient clicksClient;
 
-    public UrlServiceImplementation(UrlRepository repository, ClicksClient clicksClient) {
+    public UrlServiceImplementation(UrlRepository repository) {
         this.repository = repository;
-        this.clicksClient = clicksClient;
+
     }
     private String createShortUrl(){
         Random random =new Random();
@@ -44,8 +40,6 @@ public class UrlServiceImplementation implements UrlService {
         response.setMessage("Url created");
         response.setStatusCode(200);
         response.setUrlModel(urlModel);
-//        save clicks
-//        clicksClient.createClickRecord(new Long[]{0L, urlModel.getId()});
         return response;
     }
 
@@ -86,7 +80,6 @@ public class UrlServiceImplementation implements UrlService {
             response.setStatusCode(404);
             return response;
         }
-        clicksClient.addClicks(1L,existingLink.get(0).getId());
 
         response.setOriginalUrl(existingLink.get(0).getOriginalUrl());
         response.setMessage("original url");

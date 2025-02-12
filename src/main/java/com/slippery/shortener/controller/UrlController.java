@@ -2,7 +2,7 @@ package com.slippery.shortener.controller;
 
 import com.slippery.shortener.dto.BarcodeDto;
 import com.slippery.shortener.dto.UrlDto;
-import com.slippery.shortener.models.BarCode;
+import com.slippery.shortener.models.QrCode;
 import com.slippery.shortener.models.UrlModel;
 import com.slippery.shortener.service.BarCodeService;
 import com.slippery.shortener.service.UrlService;
@@ -49,7 +49,7 @@ public class UrlController {
         return ResponseEntity.ok(service.deleteById(urlId));
     }
     @PostMapping("/barcode")
-    public BarcodeDto createBarcode(@RequestBody BarCode barCode){
-        return barCodeService.createBarcode(barCode);
+    public BarcodeDto createBarcode(@RequestBody QrCode qrCode){
+        return barCodeService.createBarcode(qrCode);
     }
 }
