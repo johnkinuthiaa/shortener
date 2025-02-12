@@ -21,15 +21,8 @@ public class BarcodeServiceImpl implements BarCodeService {
     @Override
     public BarcodeDto createBarcode(QrCode qrCode) {
         BarcodeDto response =new BarcodeDto();
-        EAN13Bean barcodeGenerator = new EAN13Bean();
-        BitmapCanvasProvider canvas =
-                new BitmapCanvasProvider(160, BufferedImage.TYPE_BYTE_BINARY, false, 0);
 
-        barcodeGenerator.generateBarcode(canvas, qrCode.getUrlFor());
-        qrCode.setImage(canvas.getBufferedImage().toString().getBytes());
-        qrCode.setContentType(String.valueOf(canvas.getBufferedImage().getType()));
         repository.save(qrCode);
-        response.setImage(canvas.getBufferedImage());
         return response;
     }
 

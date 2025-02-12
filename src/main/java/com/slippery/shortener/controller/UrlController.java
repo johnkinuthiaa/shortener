@@ -22,8 +22,8 @@ public class UrlController {
         this.barCodeService = barCodeService;
     }
     @PostMapping("/create")
-    public ResponseEntity<UrlDto> createUrl(@RequestBody UrlModel url) {
-        return ResponseEntity.ok(service.shorten(url));
+    public ResponseEntity<UrlDto> createUrl(@RequestBody UrlModel url,@RequestParam Long userId) {
+        return ResponseEntity.ok(service.shorten(url,userId));
     }
     @GetMapping("/get/original")
     public ResponseEntity<UrlDto> getOriginal(@RequestParam String shortenedUrl){

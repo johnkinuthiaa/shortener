@@ -6,24 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class UrlModel {
+public class Clicks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String originalUrl;
-    private String shortUrl;
-    private String name;
-    private String description;
-    private LocalDateTime createdOn =LocalDateTime.now();
+    private Long clicks =0L;
     @OneToOne
-    private Clicks clicks;
-    @ManyToOne
-    private Users users;
+    private UrlModel url;
+
 }

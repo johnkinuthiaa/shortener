@@ -1,9 +1,13 @@
 package com.slippery.shortener.service.impl;
 
 import com.slippery.shortener.dto.UrlDto;
+import com.slippery.shortener.models.Clicks;
 import com.slippery.shortener.models.UrlModel;
+import com.slippery.shortener.models.Users;
 import com.slippery.shortener.repository.UrlRepository;
+import com.slippery.shortener.repository.UserRepository;
 import com.slippery.shortener.service.UrlService;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +17,13 @@ import java.util.Random;
 @Service
 public class UrlServiceImplementation implements UrlService {
     private final UrlRepository repository;
-
-    public UrlServiceImplementation(UrlRepository repository) {
+    private final UserRepository userRepository;
+//    private final ClicksR
+//start here
+    public UrlServiceImplementation(UrlRepository repository, UserRepository userRepository) {
         this.repository = repository;
 
+        this.userRepository = userRepository;
     }
     private String createShortUrl(){
         Random random =new Random();
@@ -24,7 +31,7 @@ public class UrlServiceImplementation implements UrlService {
         stringBuilder.append("shrtn.");
 
         String[] chars ={"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","z","y","z"};
-        for(int i= 0;i<15;i++){
+        for(int i= 0;i<12;i++){
             stringBuilder.append(chars[random.nextInt(20)]);
         }
         return stringBuilder.toString();
@@ -32,10 +39,23 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    public UrlDto shorten(UrlModel urlModel) {
+    public UrlDto shorten(UrlModel urlModel,Long userId) {
         UrlDto response =new UrlDto();
+        Optional<Users> existingUser =userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            response.setMessage("User not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        Clicks clicks =new Clicks();
+        clicks.setClicks(0L);
+
         var shortUrl =createShortUrl();
         urlModel.setShortUrl(shortUrl);
+        urlModel.setClicks(null);
+        urlModel.setUsers(existingUser.get());
+        clicks.setUrl(urlModel);
+
         repository.save(urlModel);
         response.setMessage("Url created");
         response.setStatusCode(200);

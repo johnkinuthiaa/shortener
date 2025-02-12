@@ -4,7 +4,7 @@ import com.slippery.shortener.dto.UrlDto;
 import com.slippery.shortener.models.UrlModel;
 
 public interface UrlService {
-    UrlDto shorten(UrlModel urlModel);
+    UrlDto shorten(UrlModel urlModel,Long userId);
     UrlDto findAll();
     UrlDto deleteById(Long urlId);
     UrlDto getOriginal(String shortenedUrl);
