@@ -1,5 +1,6 @@
 package com.slippery.shortener.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,8 @@ public class Clicks {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long clicks =0L;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private UrlModel url;
 
 }

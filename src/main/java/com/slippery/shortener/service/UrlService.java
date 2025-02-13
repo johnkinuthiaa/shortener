@@ -6,6 +6,7 @@ import com.slippery.shortener.models.UrlModel;
 public interface UrlService {
     UrlDto shorten(UrlModel urlModel,Long userId);
     UrlDto findAll();
+    UrlDto findAllByUser(Long userId);
     UrlDto deleteById(Long urlId);
     UrlDto getOriginal(String shortenedUrl);
 }

@@ -4,6 +4,7 @@ import com.slippery.shortener.dto.UrlDto;
 import com.slippery.shortener.models.Clicks;
 import com.slippery.shortener.models.UrlModel;
 import com.slippery.shortener.models.Users;
+import com.slippery.shortener.repository.ClicksRepository;
 import com.slippery.shortener.repository.UrlRepository;
 import com.slippery.shortener.repository.UserRepository;
 import com.slippery.shortener.service.UrlService;
@@ -18,12 +19,12 @@ import java.util.Random;
 public class UrlServiceImplementation implements UrlService {
     private final UrlRepository repository;
     private final UserRepository userRepository;
-//    private final ClicksR
-//start here
-    public UrlServiceImplementation(UrlRepository repository, UserRepository userRepository) {
-        this.repository = repository;
+    private final ClicksRepository clicksRepository;
 
+    public UrlServiceImplementation(UrlRepository repository, UserRepository userRepository, ClicksRepository clicksRepository) {
+        this.repository = repository;
         this.userRepository = userRepository;
+        this.clicksRepository = clicksRepository;
     }
     private String createShortUrl(){
         Random random =new Random();
@@ -52,11 +53,15 @@ public class UrlServiceImplementation implements UrlService {
 
         var shortUrl =createShortUrl();
         urlModel.setShortUrl(shortUrl);
-        urlModel.setClicks(null);
+        urlModel.setClicks(clicks);
         urlModel.setUsers(existingUser.get());
         clicks.setUrl(urlModel);
-
+        clicksRepository.save(clicks);
         repository.save(urlModel);
+        var urls =existingUser.get().getUrlForUser();
+        urls.add(urlModel);
+        existingUser.get().setUrlForUser(urls);
+        userRepository.save(existingUser.get());
         response.setMessage("Url created");
         response.setStatusCode(200);
         response.setUrlModel(urlModel);
@@ -72,6 +77,21 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+    public UrlDto findAllByUser(Long userId) {
+        UrlDto response =new UrlDto();
+        Optional<Users> existingUsers =userRepository.findById(userId);
+        if(existingUsers.isEmpty()){
+            response.setMessage("user not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        response.setUrlModels(existingUsers.get().getUrlForUser());
+        response.setMessage("All links for" +existingUsers.get().getUsername());
+        response.setStatusCode(200);
+        return response;
+    }
+
+    @Override
     public UrlDto deleteById(Long urlId) {
         UrlDto response =new UrlDto();
         Optional<UrlModel> existingUrl =repository.findById(urlId);
@@ -80,9 +100,7 @@ public class UrlServiceImplementation implements UrlService {
             response.setMessage("Url not found");
             return response;
         }
-        repository.deleteById(existingUrl.get().getId());
-        response.setStatusCode(200);
-        response.setMessage("Url deleted");
+
         return response;
     }
 
@@ -90,16 +108,20 @@ public class UrlServiceImplementation implements UrlService {
     public UrlDto getOriginal(String shortenedUrl) {
         UrlDto response =new UrlDto();
 
-
         List<UrlModel> existingLink =repository.findAll().stream()
                 .filter(urlModel -> urlModel.getShortUrl().equalsIgnoreCase(shortenedUrl))
                 .toList();
+
 
         if(existingLink.isEmpty()){
             response.setMessage("No link found");
             response.setStatusCode(404);
             return response;
         }
+        Long totalCLicks =existingLink.get(0).getClicks().getClicks();
+        totalCLicks =totalCLicks+1;
+        existingLink.get(0).getClicks().setClicks(totalCLicks);
+        repository.save(existingLink.get(0));
 
         response.setOriginalUrl(existingLink.get(0).getOriginalUrl());
         response.setMessage("original url");

@@ -1,5 +1,6 @@
 package com.slippery.shortener.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +24,6 @@ public class Users {
     private String email;
     private String role ="USER";
     @OneToMany
+    @JsonManagedReference
     private List<UrlModel> urlForUser =new ArrayList<>();
 }

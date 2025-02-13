@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 
 @RequestMapping("/api/v1/shrtn")
 @RestController
-@CrossOrigin("http://localhost:5174/")
+@CrossOrigin
 public class UrlController {
     private final UrlService service;
     private final BarCodeService barCodeService;
@@ -51,5 +51,9 @@ public class UrlController {
     @PostMapping("/barcode")
     public BarcodeDto createBarcode(@RequestBody QrCode qrCode){
         return barCodeService.createBarcode(qrCode);
+    }
+    @GetMapping("/{userId}/all-urls")
+    public ResponseEntity<UrlDto> findAllByUser(@PathVariable Long userId){
+        return ResponseEntity.ok(service.findAllByUser(userId));
     }
 }

@@ -1,5 +1,6 @@
 package com.slippery.shortener.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +23,9 @@ public class UrlModel {
     private String name;
     private String description;
     private LocalDateTime createdOn =LocalDateTime.now();
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Clicks clicks;
     @ManyToOne
+    @JsonBackReference
     private Users users;
 }
