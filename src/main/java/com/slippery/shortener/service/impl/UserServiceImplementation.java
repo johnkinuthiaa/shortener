@@ -51,23 +51,29 @@ public class UserServiceImplementation implements UserService {
     public UserDto register(Users user) {
         UserDto response =new UserDto();
         Users users =repository.findByUsername(user.getUsername());
+        Users existingEmail =repository.findByEmail(user.getEmail());
         if(user.getEmail() ==null){
-            response.setMessage("email is null!");
+            response.setMessage("email cannot be null!");
             response.setStatusCode(200);
             return response;
         }
-        if(user.getUsername() ==null){
-            response.setMessage("Username is null!");
+        if(user.getUsername().isEmpty()){
+            response.setMessage("Username cannot be null!");
             response.setStatusCode(200);
             return response;
         }
-        if(user.getPassword() ==null){
+        if(user.getPassword().isEmpty()){
             response.setMessage("password is null!");
             response.setStatusCode(200);
             return response;
         }
         if(users !=null){
             response.setMessage("user with the username already exists");
+            response.setStatusCode(200);
+            return response;
+        }
+        if(existingEmail != null){
+            response.setMessage("user with the email already exists");
             response.setStatusCode(200);
             return response;
         }

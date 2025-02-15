@@ -45,8 +45,8 @@ public class UrlController {
         return ResponseEntity.ok(service.findAll());
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<UrlDto> deleteById(@RequestParam Long urlId){
-        return ResponseEntity.ok(service.deleteById(urlId));
+    public ResponseEntity<UrlDto> deleteById(@RequestParam Long urlId,@RequestParam Long userId){
+        return ResponseEntity.ok(service.deleteById(urlId,userId));
     }
     @PostMapping("/barcode")
     public BarcodeDto createBarcode(@RequestBody QrCode qrCode){

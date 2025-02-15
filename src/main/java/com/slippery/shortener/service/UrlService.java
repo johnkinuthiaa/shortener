@@ -7,6 +7,6 @@ public interface UrlService {
     UrlDto shorten(UrlModel urlModel,Long userId);
     UrlDto findAll();
     UrlDto findAllByUser(Long userId);
-    UrlDto deleteById(Long urlId);
+    UrlDto deleteById(Long urlId,Long userId);
     UrlDto getOriginal(String shortenedUrl);
 }

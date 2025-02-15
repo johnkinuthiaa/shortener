@@ -9,9 +9,11 @@ import com.slippery.shortener.repository.UrlRepository;
 import com.slippery.shortener.repository.UserRepository;
 import com.slippery.shortener.service.UrlService;
 import org.apache.catalina.User;
+import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -92,15 +94,36 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    public UrlDto deleteById(Long urlId) {
+    public UrlDto deleteById(Long urlId,Long userId) {
         UrlDto response =new UrlDto();
         Optional<UrlModel> existingUrl =repository.findById(urlId);
+        Optional<Users> existingUser =userRepository.findById(userId);
         if(existingUrl.isEmpty()){
             response.setStatusCode(404);
             response.setMessage("Url not found");
             return response;
         }
+        if(existingUser.isEmpty()){
+            response.setStatusCode(404);
+            response.setMessage("User not found");
+            return response;
+        }
+        var urlOwner =existingUrl.get().getUsers();
+        if(!Objects.equals(urlOwner.getId(), existingUser.get().getId())){
+            response.setMessage("Url not found");
+            response.setStatusCode(401);
+            return response;
+        }
 
+        var urlsForUser =urlOwner.getUrlForUser();
+        urlsForUser.remove(existingUrl.get());
+        urlOwner.setUrlForUser(urlsForUser);
+        userRepository.save(urlOwner);
+        repository.delete(existingUrl.get());
+        var id =existingUrl.get().getClicks().getId();
+        clicksRepository.deleteById(id);
+        response.setMessage("Url deleted");
+        response.setStatusCode(200);
         return response;
     }
 
