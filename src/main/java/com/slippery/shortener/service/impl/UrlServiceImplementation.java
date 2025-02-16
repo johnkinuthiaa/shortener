@@ -10,6 +10,8 @@ import com.slippery.shortener.repository.UserRepository;
 import com.slippery.shortener.service.UrlService;
 import org.apache.catalina.User;
 import org.aspectj.apache.bcel.classfile.Module;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class UrlServiceImplementation implements UrlService {
         this.userRepository = userRepository;
         this.clicksRepository = clicksRepository;
     }
+
     private String createShortUrl(){
         Random random =new Random();
         StringBuilder stringBuilder = new StringBuilder();
@@ -42,6 +45,7 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+    @Cacheable(value = "urlDto",key = "#userId")
     public UrlDto shorten(UrlModel urlModel,Long userId) {
         UrlDto response =new UrlDto();
         Optional<Users> existingUser =userRepository.findById(userId);
@@ -71,6 +75,7 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+
     public UrlDto findAll() {
         UrlDto response =new UrlDto();
         response.setUrlModels(repository.findAll());
@@ -79,6 +84,7 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+    @Cacheable(value = "urlModels",key = "#userId")
     public UrlDto findAllByUser(Long userId) {
         UrlDto response =new UrlDto();
         Optional<Users> existingUsers =userRepository.findById(userId);
@@ -94,6 +100,7 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+    @CacheEvict(value = "urlModels",key = "urlId")
     public UrlDto deleteById(Long urlId,Long userId) {
         UrlDto response =new UrlDto();
         Optional<UrlModel> existingUrl =repository.findById(urlId);
@@ -128,6 +135,7 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
+    @Cacheable(value = "urlModels",key = "#shortenedUrl")
     public UrlDto getOriginal(String shortenedUrl) {
         UrlDto response =new UrlDto();
 

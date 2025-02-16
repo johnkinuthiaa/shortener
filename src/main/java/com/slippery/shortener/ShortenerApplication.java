@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableCaching
+
 @EnableFeignClients
 public class ShortenerApplication {
 
