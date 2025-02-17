@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDto implements Serializable {
+public class UserDto {
     private String message;
     private int statusCode;
     private Users user;

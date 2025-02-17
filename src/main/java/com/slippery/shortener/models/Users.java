@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Users implements Serializable {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +24,7 @@ public class Users implements Serializable {
     private String password;
     private String email;
     private String role ="USER";
+    private Long totalClicks =0L;
     @OneToMany
     @JsonManagedReference
     private List<UrlModel> urlForUser =new ArrayList<>();

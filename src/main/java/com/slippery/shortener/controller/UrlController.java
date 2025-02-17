@@ -1,10 +1,7 @@
 package com.slippery.shortener.controller;
 
-import com.slippery.shortener.dto.BarcodeDto;
 import com.slippery.shortener.dto.UrlDto;
-import com.slippery.shortener.models.QrCode;
 import com.slippery.shortener.models.UrlModel;
-import com.slippery.shortener.service.BarCodeService;
 import com.slippery.shortener.service.UrlService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +12,11 @@ import org.springframework.http.HttpHeaders;
 @CrossOrigin
 public class UrlController {
     private final UrlService service;
-    private final BarCodeService barCodeService;
 
-    public UrlController(UrlService service, BarCodeService barCodeService) {
+    public UrlController(UrlService service) {
         this.service = service;
-        this.barCodeService = barCodeService;
     }
+
     @PostMapping("/create")
     public ResponseEntity<UrlDto> createUrl(@RequestBody UrlModel url,@RequestParam Long userId) {
         return ResponseEntity.ok(service.shorten(url,userId));
@@ -48,12 +44,13 @@ public class UrlController {
     public ResponseEntity<UrlDto> deleteById(@RequestParam Long urlId,@RequestParam Long userId){
         return ResponseEntity.ok(service.deleteById(urlId,userId));
     }
-    @PostMapping("/barcode")
-    public BarcodeDto createBarcode(@RequestBody QrCode qrCode){
-        return barCodeService.createBarcode(qrCode);
-    }
+
     @GetMapping("/{userId}/all-urls")
     public ResponseEntity<UrlDto> findAllByUser(@PathVariable Long userId){
         return ResponseEntity.ok(service.findAllByUser(userId));
+    }
+    @GetMapping("/total-clicks/{id}")
+    public ResponseEntity<UrlDto> calculateAllClicksForUser(@PathVariable Long id){
+        return ResponseEntity.ok(service.calculateAllClicksForUser(id));
     }
 }

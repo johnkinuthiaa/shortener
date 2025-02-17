@@ -11,10 +11,11 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UrlDto implements Serializable {
+public class UrlDto{
     private String message;
     private int statusCode;
     private UrlModel urlModel;
     private String originalUrl;
     private List<UrlModel> urlModels;
+    private Long clicks;
 }

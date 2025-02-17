@@ -11,13 +11,12 @@ import com.slippery.shortener.service.UrlService;
 import org.apache.catalina.User;
 import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.awt.print.Pageable;
+import java.util.*;
 
 @Service
 public class UrlServiceImplementation implements UrlService {
@@ -45,7 +44,6 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    @Cacheable(value = "urlDto",key = "#userId")
     public UrlDto shorten(UrlModel urlModel,Long userId) {
         UrlDto response =new UrlDto();
         Optional<Users> existingUser =userRepository.findById(userId);
@@ -56,7 +54,6 @@ public class UrlServiceImplementation implements UrlService {
         }
         Clicks clicks =new Clicks();
         clicks.setClicks(0L);
-
         var shortUrl =createShortUrl();
         urlModel.setShortUrl(shortUrl);
         urlModel.setClicks(clicks);
@@ -84,7 +81,22 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    @Cacheable(value = "urlModels",key = "#userId")
+    public UrlDto calculateAllClicksForUser(Long userId) {
+        UrlDto response =new UrlDto();
+        Optional<Users> existingUser =userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            response.setMessage("User not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        var clicks = existingUser.get().getTotalClicks();
+        response.setMessage("All clicks");
+        response.setClicks(clicks);
+        response.setStatusCode(200);
+        return response;
+    }
+
+    @Override
     public UrlDto findAllByUser(Long userId) {
         UrlDto response =new UrlDto();
         Optional<Users> existingUsers =userRepository.findById(userId);
@@ -93,6 +105,7 @@ public class UrlServiceImplementation implements UrlService {
             response.setStatusCode(404);
             return response;
         }
+
         response.setUrlModels(existingUsers.get().getUrlForUser());
         response.setMessage("All links for" +existingUsers.get().getUsername());
         response.setStatusCode(200);
@@ -100,7 +113,6 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    @CacheEvict(value = "urlModels",key = "urlId")
     public UrlDto deleteById(Long urlId,Long userId) {
         UrlDto response =new UrlDto();
         Optional<UrlModel> existingUrl =repository.findById(urlId);
@@ -135,7 +147,6 @@ public class UrlServiceImplementation implements UrlService {
     }
 
     @Override
-    @Cacheable(value = "urlModels",key = "#shortenedUrl")
     public UrlDto getOriginal(String shortenedUrl) {
         UrlDto response =new UrlDto();
 
@@ -149,9 +160,13 @@ public class UrlServiceImplementation implements UrlService {
             response.setStatusCode(404);
             return response;
         }
-        Long totalCLicks =existingLink.get(0).getClicks().getClicks();
-        totalCLicks =totalCLicks+1;
-        existingLink.get(0).getClicks().setClicks(totalCLicks);
+        Long totalCLicksForUrl =existingLink.get(0).getClicks().getClicks();
+
+        totalCLicksForUrl =totalCLicksForUrl+1;
+        existingLink.get(0).getClicks().setClicks(totalCLicksForUrl);
+        var total =existingLink.get(0).getUsers().getTotalClicks();
+        total +=1;
+        existingLink.get(0).getUsers().setTotalClicks(total);
         repository.save(existingLink.get(0));
 
         response.setOriginalUrl(existingLink.get(0).getOriginalUrl());

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UrlModel implements Serializable {
+public class UrlModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

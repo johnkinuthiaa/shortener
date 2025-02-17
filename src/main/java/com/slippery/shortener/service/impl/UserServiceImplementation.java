@@ -78,6 +78,7 @@ public class UserServiceImplementation implements UserService {
             return response;
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setTotalClicks(0L);
         response.setMessage("User registered successfully!");
         response.setStatusCode(200);
         response.setUser(user);

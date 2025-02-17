@@ -7,15 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.List;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Clicks implements Serializable {
+public class Clicks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
