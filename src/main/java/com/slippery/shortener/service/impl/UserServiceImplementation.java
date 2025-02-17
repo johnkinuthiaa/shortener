@@ -10,7 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -48,7 +50,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public UserDto register(Users user) {
+    public UserDto register(Users user)  {
         UserDto response =new UserDto();
         Users users =repository.findByUsername(user.getUsername());
         Users existingEmail =repository.findByEmail(user.getEmail());
@@ -78,12 +80,35 @@ public class UserServiceImplementation implements UserService {
             return response;
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setProfilePhoto(null);
         user.setTotalClicks(0L);
         response.setMessage("User registered successfully!");
         response.setStatusCode(200);
         response.setUser(user);
         repository.save(user);
         return response;
+    }
+
+    @Override
+    public UserDto uploadProfilePhoto(MultipartFile profilePhoto, Long userId) throws IOException {
+        UserDto response =new UserDto();
+        Optional<Users> existingUser =repository.findById(userId);
+        if(existingUser.isEmpty()){
+            response.setMessage("User not found");
+            response.setStatusCode(404);
+            return response;
+        }
+        existingUser.get().setProfilePhoto(profilePhoto.getBytes());
+        repository.save(existingUser.get());
+        response.setMessage("profile photo uploaded successfully");
+        response.setStatusCode(200);
+        return response;
+    }
+
+    @Override
+    public byte[] fetchProfileImage(Long userId) {
+        Optional<Users> existingUser =repository.findById(userId);
+        return existingUser.map(Users::getProfilePhoto).orElse(null);
     }
 
     @Override

@@ -25,6 +25,8 @@ public class Users {
     private String email;
     private String role ="USER";
     private Long totalClicks =0L;
+    @Lob
+    private byte[] profilePhoto;
     @OneToMany
     @JsonManagedReference
     private List<UrlModel> urlForUser =new ArrayList<>();

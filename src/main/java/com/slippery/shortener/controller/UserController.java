@@ -1,10 +1,14 @@
 package com.slippery.shortener.controller;
 
+import com.slippery.shortener.dto.UrlDto;
 import com.slippery.shortener.dto.UserDto;
 import com.slippery.shortener.models.Users;
 import com.slippery.shortener.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -15,7 +19,6 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody Users user){
@@ -46,4 +49,15 @@ public class UserController {
     public ResponseEntity<UserDto> getAll() {
         return ResponseEntity.ok(service.findAllUsers());
     }
+
+    @PutMapping("/{userId}/upload-profile")
+    public ResponseEntity<UserDto> uploadImage(@PathVariable Long userId,@RequestPart MultipartFile profilePhoto) throws IOException {
+        return ResponseEntity.ok(service.uploadProfilePhoto(profilePhoto, userId));
+    }
+
+    @GetMapping("/fetch-profile")
+    public ResponseEntity<byte[]> fetchProfileImage(@RequestParam Long userId) {
+        return ResponseEntity.ok(service.fetchProfileImage(userId));
+    }
+
 }
